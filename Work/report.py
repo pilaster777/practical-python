@@ -1,6 +1,6 @@
 # report.py
 #
-# Exercise 2.10 and 2.11
+# Exercise 2.12
 import csv
 from pprint import pprint
 
@@ -68,10 +68,11 @@ headers = ('Name', 'Shares', 'Price', 'Change')
 ct = 0 
 sep = '----------'
 for name, shares, price, change in make_report('Data/portfolio.csv','Data/prices.csv'):
+        price = '$'+str(price)
         if ct % 10 == 0:
             print(f'{headers[0]:>10s} {headers[1]:>10s} {headers[2]:>10s} {headers[3]:>10s}')
             print(f'{sep:>10s} {sep:>10s} {sep:>10s} {sep:>10s}')
-        print(f'{name:>10s} {shares:>10d} {price:>10.2f} {change:>10.2f}')
+        print(f'{name:>10s} {shares:>10d} {price:>10s} {change:>10.2f}')
         ct +=1
        
 
