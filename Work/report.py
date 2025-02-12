@@ -1,6 +1,6 @@
 # report.py
 #
-# Exercise 2.12
+# Exercise 2.15: A practical enumerate() example
 import csv
 from pprint import pprint
 
@@ -11,12 +11,14 @@ def read_prices(pricelist_filename):
 
     with open(pricelist_filename, 'rt') as f:
         rows = csv.reader(f)
+        #headers = next(rows)
+        
         for row in rows:
-            #print(row)
             if row != []:
-                prices[row[0]]= float(row[1])
-            else:continue
-            
+                try:
+                    prices[row[0]]= float(row[1])
+                except ValueError:
+                    print(f'ValueError: Couldn\'t convert: ', end = ' ')
     return(prices)
 
 
@@ -31,15 +33,17 @@ def portfolio_cost(stock_filename,pricelist_filename):
         rows = csv.reader(f)
         headers = next(rows)
 
-        for row in rows:
+        for row_c, row in enumerate(rows, start=1):
             hldg = {}
-            hldg['name'], hldg['shares'], hldg['price'] = row[0], int(row[1]), float(row[2])
-            portfolio.append(hldg)
-        
+            try:
+                hldg['name'], hldg['shares'], hldg['price'] = row[0], int(row[1]), float(row[2])
+            except ValueError:
+                print(f'Row {row_c}: Couldn\'t convert: {row}')
+            if hldg != {}:
+                portfolio.append(hldg)
         prices = read_prices(pricelist_filename)
         
         for i in range(len(portfolio)):
-
             shares = int(portfolio[i]['shares'])
             old_price = float(portfolio[i]['price'])
             new_price = float(prices[portfolio[i]['name']])
@@ -61,13 +65,13 @@ def portfolio_cost(stock_filename,pricelist_filename):
 
 
 def make_report(stock_filename, pricelist_filename):
-    listi = portfolio_cost('Data/portfolio.csv','Data/prices.csv')
+    listi = portfolio_cost(stock_filename,pricelist_filename)
     return listi
 
 headers = ('Name', 'Shares', 'Price', 'Change')
 ct = 0 
 sep = '----------'
-for name, shares, price, change in make_report('Data/portfolio.csv','Data/prices.csv'):
+for name, shares, price, change in make_report('Data/missing.csv','Data/prices.csv'):
         price = '$'+str(price)
         if ct % 10 == 0:
             print(f'{headers[0]:>10s} {headers[1]:>10s} {headers[2]:>10s} {headers[3]:>10s}')
